@@ -1,7 +1,8 @@
 package com.orange.job.management.controller;
 
 import com.orange.job.management.dao.JobRepository;
-import com.orange.job.management.dtos.JobObject;
+import com.orange.job.management.dtos.JobCreationObject;
+import com.orange.job.management.dtos.JobCreationObject;
 import com.orange.job.management.entities.JobEntity;
 import com.orange.job.management.enumerations.Priority;
 import com.orange.job.management.enumerations.Status;
@@ -20,9 +21,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/jobs")
-@Api(value = "Job Management System", tags = {"Job Management System Resource"})
+@Api(value = "Job Management System", tags = {"Job Management System API"})
 @SwaggerDefinition(tags = {
-        @Tag(name = "Job Management System Resource", description = "End Points for the Job Management System to create jobs and retrieve their status")
+        @Tag(name = "Job Management System API", description = "End Points for the Job Management System to create jobs and retrieve their status")
 })
 public class JobController {
 
@@ -34,7 +35,7 @@ public class JobController {
     @PostMapping(value = "/create",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> createJob(@Valid @RequestBody JobObject job) {
+    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreationObject job) {
         JobEntity jobEntity = getJobEntity(job);
         JobEntity createdJob = jobRepository.save(jobEntity);
         ResponseDTO response = new ResponseDTO(createdJob.getId(), HttpStatus.OK.value(), HttpStatus.OK.name());
@@ -60,7 +61,7 @@ public class JobController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    private JobEntity getJobEntity(@RequestParam("job") JobObject job) {
+    private JobEntity getJobEntity(@RequestParam("job") JobCreationObject job) {
         Priority priority = Priority.LOW;
         if (job.priority != null) {
             priority = Priority.valueOf(job.priority);
