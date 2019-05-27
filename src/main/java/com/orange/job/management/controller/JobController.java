@@ -7,6 +7,7 @@ import com.orange.job.management.entities.JobEntity;
 import com.orange.job.management.enumerations.Priority;
 import com.orange.job.management.enumerations.Status;
 import com.orange.job.management.responses.ResponseDTO;
+import com.orange.job.management.service.JobService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ import java.util.Optional;
 public class JobController {
 
     @Autowired
-    private JobRepository jobRepository;
+    private JobService jobService;
 
     @ApiOperation(value = "Create a new job")
     @ApiResponse(code = 200, message = "Job Successfully Created")
@@ -36,9 +37,7 @@ public class JobController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreationObject job) {
-        JobEntity jobEntity = getJobEntity(job);
-        JobEntity createdJob = jobRepository.save(jobEntity);
-        ResponseDTO response = new ResponseDTO(createdJob.getId(), HttpStatus.OK.value(), HttpStatus.OK.name());
+        ResponseDTO response = jobService.createJob(job);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -50,27 +49,7 @@ public class JobController {
     @GetMapping(value = "/status/{id}")
     @ResponseBody
     public ResponseEntity<?> getJobStatus(@PathVariable(value = "id") Long jobId) throws Exception {
-        ResponseDTO response = null;
-        Optional<JobEntity> job = jobRepository.findById(jobId);
-        if (job.isPresent()) {
-            response = new ResponseDTO(job.get().getStatus().name(), HttpStatus.OK.value(), HttpStatus.OK.name());
-        } else {
-            response = new ResponseDTO(HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.NOT_ACCEPTABLE.name(), Arrays.asList("No Job Exists with this Id"));
-        }
-
+        ResponseDTO response = jobService.getJobStatus(jobId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
-    private JobEntity getJobEntity(@RequestParam("job") JobCreationObject job) {
-        Priority priority = Priority.LOW;
-        if (job.priority != null) {
-            priority = Priority.valueOf(job.priority);
-        }
-        JobEntity jobEntity = new JobEntity();
-        jobEntity.setName(job.name);
-        jobEntity.setPriority(priority);
-        jobEntity.setScheduledTime(job.scheduledTime);
-        jobEntity.setStatus(Status.valueOf(job.status));
-        return jobEntity;
     }
 }
