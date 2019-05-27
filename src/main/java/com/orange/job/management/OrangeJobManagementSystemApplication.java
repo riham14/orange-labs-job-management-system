@@ -11,14 +11,7 @@ import java.io.IOException;
 public class OrangeJobManagementSystemApplication {
 
     public static void main(String[] args) throws IOException {
-        /*
-        Resource resource = new ClassPathResource("application.properties");
-        Properties baseProperties = PropertiesLoaderUtils.loadProperties(resource);
-        Resource databasePropertiesFile = new FileSystemResource(baseProperties.getProperty("database.properties"));
-        Properties databaseProperties = PropertiesLoaderUtils.loadProperties(databasePropertiesFile);
-        databaseProperties.forEach((key, value) -> System.setProperty((String)key, (String)value));
 
-         */
 
         SpringApplication.run(OrangeJobManagementSystemApplication.class, args);
     }

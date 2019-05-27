@@ -1,5 +1,8 @@
 package com.orange.job.management.entities;
 
+import com.orange.job.management.utils.LocalDateTimeConverter;
+import com.orange.job.management.enumerations.Priority;
+import com.orange.job.management.enumerations.Status;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,19 +22,22 @@ public class JobEntity implements Comparable<JobEntity>{
     private String name;
 
     @Column(name = "priority")
-    private String priority;
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column(name = "scheduledTime")
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime scheduledTime;
 
     @Override
     public int compareTo(JobEntity o) {
-        if(this.getScheduledTime().isBefore(o.getScheduledTime())){
+        if(this.getPriority().ordinal() < o.getPriority().ordinal()){
             return -1;
-        } else if(this.getScheduledTime().isAfter(o.getScheduledTime())){
+        } else if(this.getPriority().ordinal() > o.getPriority().ordinal()){
             return 1;
         } else {
             return 0;
