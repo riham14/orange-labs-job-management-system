@@ -33,6 +33,8 @@ public class JobControllerITest {
     @Autowired
     private JobRepository jobRepository;
 
+    private static final String BASE_URL = "/job";
+
     /*@Before
     public void setUp(){
         mvc = MockMvcBuilders.standaloneSetup(jobController).build();
@@ -72,12 +74,11 @@ public class JobControllerITest {
     @Test
     public void createJobSuccessTest(){
         String userJson = "{ " +
-                "\"name\": \"FirstJob\", " +
-                "\"status\":  \"QUEUED\", " +
+                "\"name\": \"First Job\", " +
                 "\"scheduledTime\":  \"2020-02-06T03:45:42.01\", " +
                 "\"priority\":  \"HIGH\" " +
                 "}";
-        ResponseEntity<ResponseDTO> response = template.postForEntity("/jobs/create", getHttpEntity(userJson), ResponseDTO.class);
+        ResponseEntity<ResponseDTO> response = template.postForEntity(BASE_URL + "/create", getHttpEntity(userJson), ResponseDTO.class);
 
         Assert.assertTrue(response.getBody().isSuccess());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -88,17 +89,15 @@ public class JobControllerITest {
     @Test
     public void createJobFailureTest(){
         String userJson = "{ " +
-                "\"name\": \"FirstJob\", " +
-                "\"status\":  \"QUEUED\", " +
+                "\"name\": \"First Job\", " +
                 "\"priority\":  \"HIGH\" " +
                 "}";
-        ResponseEntity<ResponseDTO> response = template.postForEntity("/jobs/create", getHttpEntity(userJson), ResponseDTO.class);
+        ResponseEntity<ResponseDTO> response = template.postForEntity(BASE_URL + "/create", getHttpEntity(userJson), ResponseDTO.class);
 
         Assert.assertFalse(response.getBody().isSuccess());
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        System.out.println("==================" + response.getBody());
     }
 
     @Test
@@ -106,19 +105,32 @@ public class JobControllerITest {
 
         //first, create a job entity and get its id, to get its status later
         Long jobId = createJob();
-        ResponseEntity<ResponseDTO> response = template.getForEntity("/jobs/status/" + jobId, ResponseDTO.class);
+        ResponseEntity<ResponseDTO> response = template.getForEntity(BASE_URL + "/status/" + jobId, ResponseDTO.class);
 
         Assert.assertTrue(response.getBody().isSuccess());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        //delete the created job
+        jobRepository.deleteById(jobId);
     }
 
     @Test
     public void getJobStatusFailureTest() throws Exception{
 
-        ResponseEntity<ResponseDTO> response = template.getForEntity("/jobs/status/1", ResponseDTO.class);
+        ResponseEntity<ResponseDTO> response = template.getForEntity(BASE_URL + "/status/1", ResponseDTO.class);
 
         Assert.assertFalse(response.getBody().isSuccess());
         Assert.assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+    }
+
+    //@Test
+    public void createEntitiesList(){
+        int count = 10;
+        while(count>0){
+            createJob();
+            count--;
+        }
+        add = 1;
     }
 
     private Long createJob() {
@@ -131,16 +143,4 @@ public class JobControllerITest {
         JobEntity createdJob = jobRepository.save(job);
         return createdJob.getId();
     }
-
-    @Test
-    public void createEntitiesList(){
-        int count = 10;
-        while(count>0){
-            createJob();
-            count--;
-        }
-        add = 1;
-    }
-
-
 }

@@ -22,7 +22,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public ResponseDTO createJob(JobCreationObject job) {
-        JobEntity jobEntity = getJobEntity(job);
+        JobEntity jobEntity = createJobEntity(job);
         JobEntity createdJob = jobRepository.save(jobEntity);
         return new ResponseDTO(createdJob.getId(), HttpStatus.OK.value(), HttpStatus.OK.name());
     }
@@ -39,7 +39,8 @@ public class JobServiceImpl implements JobService {
         return response;
     }
 
-    private JobEntity getJobEntity(@RequestParam("job") JobCreationObject job) {
+    private JobEntity createJobEntity(@RequestParam("job") JobCreationObject job) {
+        //if no job priority is given, assume it to be LOW
         Priority priority = Priority.LOW;
         if (job.priority != null) {
             priority = Priority.valueOf(job.priority);
@@ -48,7 +49,8 @@ public class JobServiceImpl implements JobService {
         jobEntity.setName(job.name);
         jobEntity.setPriority(priority);
         jobEntity.setScheduledTime(job.scheduledTime);
-        jobEntity.setStatus(Status.valueOf(job.status));
+        // when a job is created, set its initial status as QUEUED
+        jobEntity.setStatus(Status.QUEUED);
         return jobEntity;
     }
 }

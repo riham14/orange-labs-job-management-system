@@ -19,10 +19,6 @@ public class JobCreationObject {
     @JsonProperty(value = "priority")
     public String priority;
 
-    @JsonProperty(value = "status")
-    @NotNull(message = "Please enter a job status, ex: QUEUED")
-    public String status;
-
     @JsonProperty(value = "scheduledTime")
     @NotNull(message = "Please enter the job's scheduled time")
     public LocalDateTime scheduledTime;

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping("/job")
 @Api(value = "Job Management System", tags = {"Job Management System API"})
 @SwaggerDefinition(tags = {
         @Tag(name = "Job Management System API", description = "End Points for the Job Management System to create jobs and retrieve their status")
