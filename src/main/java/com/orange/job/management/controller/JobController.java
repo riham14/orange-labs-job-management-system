@@ -6,7 +6,7 @@ import com.orange.job.management.dtos.JobCreationObject;
 import com.orange.job.management.entities.JobEntity;
 import com.orange.job.management.enumerations.Priority;
 import com.orange.job.management.enumerations.Status;
-import com.orange.job.management.responses.ResponseDTO;
+import com.orange.job.management.responses.JobResponseDTO;
 import com.orange.job.management.service.JobService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class JobController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreationObject job) {
-        ResponseDTO response = jobService.createJob(job);
+        JobResponseDTO response = jobService.createJob(job);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -47,9 +47,16 @@ public class JobController {
             @ApiResponse(code = 406, message = "No Job Exists with this Id")
     })
     @GetMapping(value = "/status/{id}")
-    @ResponseBody
     public ResponseEntity<?> getJobStatus(@PathVariable(value = "id") Long jobId) throws Exception {
-        ResponseDTO response = jobService.getJobStatus(jobId);
+        JobResponseDTO response = jobService.getJobStatus(jobId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @ApiOperation(value = "Get all jobs")
+    @ApiResponse(code = 200, message = "Jobs Successfully Retrieved")
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> getAllJobs()  {
+        JobResponseDTO response = jobService.getAllJobs();
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 }

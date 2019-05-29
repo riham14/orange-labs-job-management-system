@@ -37,7 +37,7 @@ public class JobScheduler {
         jobs.stream().forEach(priorityJobs::add);
 
         //perform each job sorted by priority
-        priorityJobs.stream().forEach( job -> jobPerformer.manageJob(job));
+        priorityJobs.stream().forEach(jobPerformer::manageJob);
     }
 
 

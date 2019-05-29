@@ -1,11 +1,13 @@
 package com.orange.job.management.service;
 
 import com.orange.job.management.dtos.JobCreationObject;
-import com.orange.job.management.responses.ResponseDTO;
+import com.orange.job.management.responses.JobResponseDTO;
 
 public interface JobService {
 
-    public ResponseDTO createJob(JobCreationObject job);
+    public JobResponseDTO createJob(JobCreationObject job);
 
-    public ResponseDTO getJobStatus(Long jobId);
+    public JobResponseDTO getJobStatus(Long jobId);
+
+    public JobResponseDTO getAllJobs();
 }

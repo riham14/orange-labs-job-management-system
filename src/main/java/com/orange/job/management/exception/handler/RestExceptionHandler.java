@@ -1,6 +1,6 @@
 package com.orange.job.management.exception.handler;
 
-import com.orange.job.management.responses.ResponseDTO;
+import com.orange.job.management.responses.JobResponseDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> errors = e.getBindingResult().getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-        ResponseDTO response = new ResponseDTO(status.value(), status.name(), errors);
+        JobResponseDTO response = new JobResponseDTO(status.value(), status.name(), errors);
         return new ResponseEntity<>(response, status);
     }
 }
