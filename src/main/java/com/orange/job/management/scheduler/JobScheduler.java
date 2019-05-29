@@ -33,10 +33,15 @@ public class JobScheduler {
         List<JobEntity> jobs = jobRepository.getCurrentJobs(LocalDateTime.now().withSecond(0).withNano(0));
 
         //insert the jobs in a priority queue to get get sorted according to their priority
-        PriorityQueue<JobEntity> priorityJobs = new PriorityQueue<>();
-        jobs.stream().forEach(priorityJobs::add);
+        PriorityQueue<JobEntity> priorityJobs = prioritizeJobs(jobs);
 
         //perform each job sorted by priority
         priorityJobs.stream().forEach(jobPerformer::manageJob);
+    }
+
+    public PriorityQueue<JobEntity> prioritizeJobs(List<JobEntity> jobs){
+        PriorityQueue<JobEntity> priorityJobs = new PriorityQueue<>();
+        jobs.stream().forEach(priorityJobs::add);
+        return priorityJobs;
     }
 }

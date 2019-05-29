@@ -18,7 +18,6 @@ public class TestUtil {
     @Autowired
     private JobRepository jobRepository;
 
-
     public void createJobEntitiesList(){
         int count = 10;
         while(count>0){

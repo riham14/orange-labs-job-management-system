@@ -36,9 +36,9 @@ public class JobEntity implements Comparable<JobEntity>{
     @Override
     public int compareTo(JobEntity o) {
         if(this.getPriority().ordinal() < o.getPriority().ordinal()){
-            return -1;
-        } else if(this.getPriority().ordinal() > o.getPriority().ordinal()){
             return 1;
+        } else if(this.getPriority().ordinal() > o.getPriority().ordinal()){
+            return -1;
         } else {
             return 0;
         }
