@@ -4,7 +4,6 @@ import com.orange.job.management.dao.JobRepository;
 import com.orange.job.management.entities.JobEntity;
 import com.orange.job.management.enumerations.Priority;
 import com.orange.job.management.enumerations.Status;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
