@@ -1,11 +1,10 @@
 package com.orange.job.management.controller;
 
 import com.orange.job.management.OrangeJobManagementSystemApplication;
-import com.orange.job.management.dao.JobRepository;
-import com.orange.job.management.entities.JobEntity;
+
 import com.orange.job.management.enumerations.Priority;
-import com.orange.job.management.enumerations.Status;
 import com.orange.job.management.responses.JobResponseDTO;
+import com.orange.job.management.util.TestUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,18 +17,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OrangeJobManagementSystemApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @PropertySource("classpath:application.properties")
 public class JobControllerITest {
-    private long add = 1;
     @Autowired
     private TestRestTemplate template;
 
     @Autowired
-    private JobRepository jobRepository;
+    private TestUtil testUtil;
 
     private static final String BASE_URL = "/job";
 
@@ -51,7 +47,7 @@ public class JobControllerITest {
         Assert.assertTrue(response.getBody().isSuccess());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        jobRepository.deleteById(response.getBody().getJobId());
+        testUtil.deleteJobById(response.getBody().getJobId());
     }
 
     @Test
@@ -72,14 +68,14 @@ public class JobControllerITest {
     public void getJobStatusSuccessTest() throws Exception{
 
         //first, create a job entity and get its id, to get its status later
-        Long jobId = createJobEntity();
+        Long jobId = testUtil.createJobEntity(Priority.HIGH, LocalDateTime.now().withSecond(0).withNano(0)).getId();
         ResponseEntity<JobResponseDTO> response = template.getForEntity(BASE_URL + "/status/" + jobId, JobResponseDTO.class);
 
         Assert.assertTrue(response.getBody().isSuccess());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         //delete the created job
-        jobRepository.deleteById(jobId);
+        testUtil.deleteJobById(jobId);
     }
 
     @Test
@@ -103,7 +99,7 @@ public class JobControllerITest {
     @Test
     public void getAllJobsTest(){
         //create some jobs first
-        createJobEntitiesList();
+        testUtil.createJobEntitiesList();
 
         ResponseEntity<JobResponseDTO> response = template.getForEntity(BASE_URL + "/all", JobResponseDTO.class);
 
@@ -112,28 +108,6 @@ public class JobControllerITest {
         Assert.assertEquals(10, response.getBody().getJobs().size());
 
         //delete created jobs
-        for(JobEntity job : response.getBody().getJobs()){
-            jobRepository.delete(job);
-        }
-    }
-
-    public void createJobEntitiesList(){
-        int count = 10;
-        while(count>0){
-            createJobEntity();
-            count--;
-        }
-        add = 1;
-    }
-
-    private Long createJobEntity() {
-        JobEntity job = new JobEntity();
-        job.setStatus(Status.QUEUED);
-        job.setName("Job " + Long.toString(add));
-        job.setScheduledTime(LocalDateTime.now().plusMinutes(add).withSecond(0).withNano(0));
-        add++;
-        job.setPriority(Priority.HIGH);
-        JobEntity createdJob = jobRepository.save(job);
-        return createdJob.getId();
+        testUtil.deleteJobs(response.getBody().getJobs());
     }
 }
